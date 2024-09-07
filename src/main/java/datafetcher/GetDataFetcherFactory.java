@@ -1,20 +1,17 @@
 package datafetcher;
 
-import models.TimeGranularity;
-import models.TimeInterval;
-
 public class GetDataFetcherFactory {
-    public DataFetcher getDataFetcher(TimeGranularity granularity, String api, TimeInterval timeInterval) {
+    public DataFetcher getDataFetcher(String granularity, String api, String timeInterval) {
         if (granularity == null) {
             return null;
         }
-        if (granularity.equals(TimeGranularity.INTRADAY)) {
+        if (granularity.equals("INTRADAY")) {
             return new IntraDayDataFetcher(api, timeInterval);
-        } else if (granularity.equals(TimeGranularity.DAILY)) {
+        } else if (granularity.equalsIgnoreCase("DAILY")) {
             return new DailyDataFetcher(api, timeInterval);
-        } else if (granularity.equals(TimeGranularity.WEEKLY)) {
+        } else if (granularity.equals("WEEKLY")) {
             return new WeeklyDataFetcher(api, timeInterval);
-        } else if (granularity.equals(TimeGranularity.MONTHLY)) {
+        } else if (granularity.equals("MONTHLY")) {
             return new MonthlyDataFetcher(api, timeInterval);
         }
         return null;

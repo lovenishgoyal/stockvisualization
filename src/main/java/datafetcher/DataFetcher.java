@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.Constants;
-import models.TimeInterval;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,12 +26,12 @@ import java.util.List;
 public abstract class DataFetcher {
 
     String api_key;
-    TimeInterval timeInterval;
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String timeInterval;
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static final Logger logger = LoggerFactory.getLogger(DataFetcher.class);
 
-    public DataFetcher(String apiKey, TimeInterval timeInterval) {
+    public DataFetcher(String apiKey, String timeInterval) {
         this.api_key = apiKey;
         this.timeInterval = timeInterval;
     }
@@ -55,19 +54,6 @@ public abstract class DataFetcher {
             response.append(inputLine);
         }
         in.close();
-        System.out.println("output: " + response.toString());
-        System.out.println("output--------: ");
-        System.out.println("output--------: ");
-
-        System.out.println("output--------: ");
-
-        System.out.println("output--------: ");
-        System.out.println("output--------: ");
-        System.out.println("output--------: ");
-        System.out.println("output--------: ");
-        System.out.println("output--------: ");
-        System.out.println("output--------: ");
-
         return response.toString();
     }
 

@@ -9,14 +9,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import models.OHLCData;
-import org.json.JSONObject;
-import models.TimeGranularity;
 
 import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import models.TimeInterval;
 
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class UIController extends Application {
 
         Label intervalLabel = new Label("Time Interval:");
         ComboBox<String> intervalComboBox = new ComboBox<>();
-        intervalComboBox.getItems().addAll("1 minute", "5 minutes", "15 minutes", "30 minutes", "60 minutes");
+        intervalComboBox.getItems().addAll("1min", "5min", "15min", "30min", "60min");
         intervalLabel.setVisible(false); // Initially hidden
         intervalComboBox.setVisible(false); // Initially hidden
 
@@ -61,7 +58,7 @@ public class UIController extends Application {
         // Handle Time Granularity Selection
         timeGranularity.setOnAction(e -> {
             String granularity = timeGranularity.getValue();
-            if (TimeGranularity.INTRADAY.equals(granularity)) {
+            if ("INTRADAY".equalsIgnoreCase(granularity)) {
                 intervalLabel.setVisible(true);
                 intervalComboBox.setVisible(true);
             } else {
@@ -78,13 +75,13 @@ public class UIController extends Application {
             String stockName = stockInput.getText().trim();
             String granularity = timeGranularity.getValue().trim();
             String interval = intervalComboBox.getValue();
-            TimeInterval timeInterval = null;
+            //TimeInterval timeInterval = null;
 
             logger.info("Given Stock Name: " + stockName);
             logger.info("Given Time Granularity: " + granularity);
             if ("Intraday".equals(granularity)) {
                 logger.info("Given Time Interval: " + interval);
-                timeInterval = TimeInterval.valueOf(interval.toUpperCase());
+                //timeInterval = TimeInterval.valueOf(interval.toUpperCase());
             }
 
             if (stockName == null || stockName.isEmpty() || granularity == null) {
@@ -93,16 +90,15 @@ public class UIController extends Application {
             }
 
             // If "Intraday" is selected, ensure an interval is selected as well
-            if ("Intraday".equals(granularity) && (interval == null || interval.isEmpty())) {
+            if ("Intraday".equalsIgnoreCase(granularity) && (interval == null || interval.isEmpty())) {
                 logger.error("Time interval is not selected for Intraday data");
                 return;
             }
 
-
             GetDataFetcherFactory dataFetcherFactory = new GetDataFetcherFactory();
 
-            DataFetcher df = dataFetcherFactory.getDataFetcher(TimeGranularity.valueOf(granularity.toUpperCase()),
-                    API_KEY, timeInterval);
+            DataFetcher df = dataFetcherFactory.getDataFetcher(granularity.toUpperCase(),
+                    API_KEY, interval);
 
             String data;
             // Get data from api

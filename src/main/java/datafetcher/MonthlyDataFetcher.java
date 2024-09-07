@@ -1,17 +1,15 @@
 package datafetcher;
 
 import utils.Constants;
-import models.TimeGranularity;
-import models.TimeInterval;
 
 public class MonthlyDataFetcher extends DataFetcher {
-    public MonthlyDataFetcher(String apiKey, TimeInterval timeInterval) {
+    public MonthlyDataFetcher(String apiKey, String timeInterval) {
         super(apiKey, timeInterval);
     }
 
     @Override
     String getRequestUrl() {
-        return String.format(Constants.DATA_API_URL, TimeGranularity.MONTHLY.toString(), api_key);
+        return String.format(Constants.DATA_API_URL, "MONTHLY", api_key);
     }
 
     @Override

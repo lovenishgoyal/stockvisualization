@@ -59,8 +59,9 @@ public class CandleChartRenderer {
         NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 
         // Use a custom date format with the desired time zone
-        TimeZoneDateFormat customDateFormat = new TimeZoneDateFormat("MM-dd HH:mm", TimeZone.getTimeZone("America/New_York"));
+        TimeZoneDateFormat customDateFormat = new TimeZoneDateFormat("MM-dd HH:mm",TimeZone.getDefault());
         dateAxis.setDateFormatOverride(customDateFormat);
+
 
         // Set default range for Y-axis to avoid out-of-bounds issue
         yAxis.setAutoRangeIncludesZero(true);
@@ -70,10 +71,9 @@ public class CandleChartRenderer {
         plot.setRenderer(renderer);
 
         // Enable zooming and panning
-        plot.setDomainPannable(true); // Allow panning on x-axis
+        plot.setDomainPannable(false); // Allow panning on x-axis
         plot.setRangePannable(true);  // Allow panning on y-axis
-        //plot.setDomainZoomable(true); // Enable zooming on x-axis
-        //plot.setRangeZoomable(true);  // Enable zooming on y-axis
+
 
         // Set initial range for axes
         plot.getDomainAxis().setAutoRange(true);

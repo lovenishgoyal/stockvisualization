@@ -23,7 +23,6 @@ import org.jfree.chart.renderer.xy.CandlestickRenderer;
 import org.jfree.data.xy.OHLCDataset;
 import org.json.JSONObject;
 import utils.Constants;
-import models.TimeGranularity;
 import utils.Helper;
 import utils.TimeZoneDateFormat;
 
@@ -32,7 +31,7 @@ import javax.swing.*;
 public class StockDataFetcher {
 
     private static final String API_KEY = "XTN5B7134EVRGGHK";
-    private static final String API_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&apikey=XTN5B7134EVRGGHK&symbol=ibm";
+    private static final String API_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&apikey=XTN5B7134EVRGGHK&interval=1min&symbol=tsla";
 
     static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -70,7 +69,7 @@ public class StockDataFetcher {
         List<OHLCData> ohlcDataList = new ArrayList<>();
 
         try {
-            String key = "Time Series (Daily)";
+            String key = "Time Series(1min)";
             JSONObject timeSeries = new JSONObject(jsonObject).getJSONObject(key);
             for (String dateStr : timeSeries.keySet()) {
                 JSONObject dailyData = timeSeries.getJSONObject(dateStr);
