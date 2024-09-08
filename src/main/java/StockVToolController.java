@@ -1,4 +1,5 @@
 import chart.CandleChartRenderer;
+import chart.LineChartRenderer;
 import datafetcher.DataFetcher;
 import datafetcher.GetDataFetcherFactory;
 import javafx.application.Application;
@@ -7,13 +8,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.OHLCData;
 
 import javax.swing.*;
 
+import models.StockRawDataProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.Constants;
 
 import java.util.List;
 
@@ -21,8 +25,8 @@ import java.util.List;
  * @author lovenishgoyal
  * @version 1.0
  */
-public class UIController extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(UIController.class);
+public class StockVToolController extends Application {
+    private static final Logger logger = LoggerFactory.getLogger(StockVToolController.class);
     private static final String API_KEY = "XTN5B7134EVRGGHK";
 
     @Override
@@ -33,13 +37,24 @@ public class UIController extends Application {
 
         Label timeLabel = new Label("Please Choose Time Granularity:");
         ComboBox<String> timeGranularity = new ComboBox<>();
-        timeGranularity.getItems().addAll("Daily", "Weekly", "Monthly", "Intraday");
+        timeGranularity.getItems().addAll(Constants.TIME_GRANULARITY_OPTIONS);
 
         Label intervalLabel = new Label("Time Interval:");
         ComboBox<String> intervalComboBox = new ComboBox<>();
-        intervalComboBox.getItems().addAll("1min", "5min", "15min", "30min", "60min");
+        intervalComboBox.getItems().addAll(Constants.TIME_INTERVAL_OPTIONS);
         intervalLabel.setVisible(false); // Initially hidden
         intervalComboBox.setVisible(false); // Initially hidden
+
+        // Create Radio Buttons for Chart Type Selection
+        RadioButton lineChartButton = new RadioButton("Line Chart");
+        RadioButton candleChartButton = new RadioButton("Candle Chart");
+        ToggleGroup chartTypeGroup = new ToggleGroup();
+        lineChartButton.setToggleGroup(chartTypeGroup);
+        candleChartButton.setToggleGroup(chartTypeGroup);
+        lineChartButton.setSelected(true); // Default selection
+
+        // Layout for Radio Buttons
+        VBox radioBox = new VBox(10, lineChartButton, candleChartButton);
 
         Button submitButton = new Button("Submit");
 
@@ -53,7 +68,8 @@ public class UIController extends Application {
         gridPane.add(timeGranularity, 1, 1);
         gridPane.add(intervalLabel, 0, 2);
         gridPane.add(intervalComboBox, 1, 2);
-        gridPane.add(submitButton, 1, 3);
+        gridPane.add(radioBox, 0, 3, 2, 1); // Add the radio buttons before the submit button
+        gridPane.add(submitButton, 1, 4);
 
         // Handle Time Granularity Selection
         timeGranularity.setOnAction(e -> {
@@ -86,12 +102,14 @@ public class UIController extends Application {
 
             if (stockName == null || stockName.isEmpty() || granularity == null) {
                 logger.error("Enter a valid stock name and time granularity");
+                showAlert(Alert.AlertType.ERROR, "Input Error", "Stock Name and granularity are must");
                 return;
             }
 
             // If "Intraday" is selected, ensure an interval is selected as well
             if ("Intraday".equalsIgnoreCase(granularity) && (interval == null || interval.isEmpty())) {
                 logger.error("Time interval is not selected for Intraday data");
+                showAlert(Alert.AlertType.ERROR, "Input Error", "Time interval is not selected for Intraday data");
                 return;
             }
 
@@ -100,21 +118,28 @@ public class UIController extends Application {
             DataFetcher df = dataFetcherFactory.getDataFetcher(granularity.toUpperCase(),
                     API_KEY, interval);
 
-            String data;
-            // Get data from api
+            StockRawDataProcess stockRawDataProcess;
+
             try {
-                data = df.getStockData(stockName);
+                stockRawDataProcess = df.getStockData(stockName);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
 
-            List<OHLCData> ohlcData = df.parseStockData(data);
+            JPanel chartPanel;
+            try {
+                if (chartTypeGroup.getSelectedToggle() == lineChartButton) {
+                    chartPanel = LineChartRenderer.createLineChart(stockRawDataProcess, stockName);
+                } else {
+                    chartPanel = CandleChartRenderer.createCandleChart(stockRawDataProcess, stockName);
+                }
+            } catch (Exception ex) {
+                logger.error("Error creating chart", ex);
+                showAlert(Alert.AlertType.ERROR, "Chart Error", "Error creating chart. Please try again.");
+                return;
+            }
 
-            // Create candlestick chart and add to SwingNode
-
-            JPanel chartPanel = CandleChartRenderer.createChart(ohlcData, stockName);
             swingNode.setContent(chartPanel);
-
 
         });
 
@@ -129,6 +154,15 @@ public class UIController extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
     public static void main(String[] args) {
         launch(args);
