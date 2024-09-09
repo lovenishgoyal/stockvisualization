@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import chart.CandleChartRenderer;
 import models.OHLCData;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -31,22 +32,15 @@ import javax.swing.*;
 public class StockDataFetcher {
 
     private static final String API_KEY = "XTN5B7134EVRGGHK";
-    private static final String API_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&apikey=XTN5B7134EVRGGHK&interval=1min&symbol=tsla";
+    private static final String API_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&apikey=XTN5B7134EVRGGHK&outputsize=compact&symbol=TSLA";
 
     static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static void main(String[] args) throws Exception {
         JSONObject result = getStockData("IBM");
-        parseStockData(result.toString());
         System.out.println(result.keySet().size());
         System.out.println(getStockData("IBM"));
     }
-
-    // "Weekly Time Series"
-    // "Time Series (Daily)"
-    // "Monthly Time Series"
-    // "Time Series (1min)"
-
 
     public static JSONObject getStockData(String stockSymbol) throws Exception {
 
@@ -64,84 +58,5 @@ public class StockDataFetcher {
         in.close();
         return new JSONObject(response.toString());
     }
-
-    public static List<OHLCData> parseStockData(String jsonObject) {
-        List<OHLCData> ohlcDataList = new ArrayList<>();
-
-        try {
-            String key = "Time Series(1min)";
-            JSONObject timeSeries = new JSONObject(jsonObject).getJSONObject(key);
-            for (String dateStr : timeSeries.keySet()) {
-                JSONObject dailyData = timeSeries.getJSONObject(dateStr);
-
-                Date date = dateFormat.parse(dateStr);
-                double open = dailyData.getDouble(Constants.OPEN_KEY);
-                double high = dailyData.getDouble(Constants.HIGH_KEY);
-                double low = dailyData.getDouble(Constants.LOW_KEY);
-                double close = dailyData.getDouble(Constants.CLOSE_KEY);
-                double volume = dailyData.getDouble(Constants.VOLUME_KEY);
-
-                ohlcDataList.add(new OHLCData(date, open, high, low, close, volume));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-        return ohlcDataList;
-    }
-
-    public static JPanel createChart(List<OHLCData> ohlcDataList, String stockName) {
-        try {
-            OHLCDataset dataset = Helper.convertToDataset(stockName, ohlcDataList);
-
-            JFreeChart chart = ChartFactory.createCandlestickChart(
-                    "Candlestick Chart for " + stockName,
-                    "Time",
-                    "Price",
-                    dataset,
-                    true
-            );
-
-            // Access the XYPlot, which contains the axes
-            XYPlot plot = (XYPlot) chart.getPlot();
-
-            // Access the Y-axis (price axis) and set its lower bound to 0
-            NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-            yAxis.setLowerBound(0);  // Set Y-axis to start from 0
-
-            DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-
-            // Use a custom date format with the desired time zone
-            TimeZoneDateFormat customDateFormat = new TimeZoneDateFormat("MM-dd HH:mm", TimeZone.getTimeZone("America/New_York"));
-            dateAxis.setDateFormatOverride(customDateFormat);
-
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setPreferredSize(new Dimension(800, 600));
-            chartPanel.setMouseWheelEnabled(true);
-            chartPanel.setDomainZoomable(true);
-            chartPanel.setRangeZoomable(true);
-            chartPanel.setRangeZoomable(true);
-            chartPanel.setZoomAroundAnchor(true);
-            chartPanel.setFillZoomRectangle(true);
-
-            CandlestickRenderer renderer = new CandlestickRenderer();
-            plot.setRenderer(renderer);
-
-            plot.setDomainPannable(true); // Allow panning
-            plot.setRangePannable(true);  // Allow panning
-
-            // Set initial range for axes
-            plot.getDomainAxis().setAutoRange(true);
-            plot.getRangeAxis().setAutoRange(true);
-
-            // chartPanel.setMouseZoomable(true);
-
-            return chartPanel;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 }
 

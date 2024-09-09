@@ -44,14 +44,16 @@ public abstract class DataFetcher {
 
     abstract String getTimeSeriesKey();
 
-
     public StockRawDataProcess getStockData(String stockSymbol) throws Exception {
 
         String requestUrl = getRequestUrl() + "&symbol=" + stockSymbol;
-        logger.info("requestUrl" + requestUrl);
+       //String requestUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&apikey=XTN5B7134EVRGGHK&outputsize=compact&symbol=TSLA";
+        logger.info("requestUrl: " + requestUrl);
+        logger.info("code: " + getRequestUrl() + "&symbol=" + stockSymbol);
         URL url = new URL(requestUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
+        logger.info(String.valueOf(connection.getResponseCode()));
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
@@ -59,11 +61,12 @@ public abstract class DataFetcher {
             response.append(inputLine);
         }
         in.close();
-        logger.info("----Lovenish------");
-        logger.info(response.toString());
         StockRawDataProcess dataProcess = new StockRawDataProcess(response.toString(), getDateFormat(), getTimeSeriesKey());
+        logger.info("response: " + response.toString());
+
         return dataProcess;
     }
+
 
 
 }
