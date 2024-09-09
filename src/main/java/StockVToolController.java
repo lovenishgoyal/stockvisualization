@@ -24,6 +24,7 @@ import utils.Constants;
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -33,6 +34,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * The StockVToolController class is a JavaFX application that serves as a controller
@@ -41,7 +43,28 @@ import java.util.List;
  */
 public class StockVToolController extends Application {
     private static final Logger logger = LoggerFactory.getLogger(StockVToolController.class);
-    private static final String API_KEY = "XTN5B7134EVRGGHK";
+
+    private static String API_KEY;
+
+    static {
+        try (InputStream input = StockVToolController.class.getClassLoader().getResourceAsStream("config.properties")) {
+            Properties properties = new Properties();
+            if (input == null) {
+                logger.error("Sorry, unable to find config.properties");
+                throw new RuntimeException("config.properties file not found.");
+            }
+            properties.load(input);
+            API_KEY = properties.getProperty("api.key");
+            if (API_KEY == null || API_KEY.isEmpty()) {
+                logger.error("API key is not set in config.properties");
+                throw new RuntimeException("API key is not set in config.properties.");
+            }
+        } catch (Exception ex) {
+            logger.error("Error loading API key", ex);
+            throw new RuntimeException("Error loading API key", ex);
+        }
+    }
+
 
     /**
      * The entry point of the JavaFX application. Sets up the user interface,
@@ -203,7 +226,7 @@ public class StockVToolController extends Application {
 
         // Create the scene and set it on the stage
 
-        Scene scene = new Scene(borderPane, 1200, 1000);
+        Scene scene = new Scene(borderPane, 900, 700);
         primaryStage.setTitle("Stock Visualization Tool");
         primaryStage.setScene(scene);
         primaryStage.show();
