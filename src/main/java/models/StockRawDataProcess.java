@@ -17,18 +17,24 @@ public class StockRawDataProcess {
     private String rawData;
     private DateFormat df;
     private String timeSeriesKey;
+    private String timeGranularity;
+
+    private String timeInterval;
+
 
     /**
      * Constructs a {@code StockRawDataProcess} instance with the specified raw data, date format, and time series key.
      *
-     * @param rawData the raw data as a JSON string
-     * @param df the date format used to parse the date strings in the raw data
+     * @param rawData       the raw data as a JSON string
+     * @param df            the date format used to parse the date strings in the raw data
      * @param timeSeriesKey the key to access the time series data in the raw data
      */
-    public StockRawDataProcess(String rawData, DateFormat df, String timeSeriesKey) {
+    public StockRawDataProcess(String rawData, DateFormat df, String timeSeriesKey, String timeGranularity, String timeInterval) {
         this.rawData = rawData;
         this.df = df;
         this.timeSeriesKey = timeSeriesKey;
+        this.timeGranularity = timeGranularity;
+        this.timeInterval = timeInterval;
     }
 
     /**
@@ -83,5 +89,26 @@ public class StockRawDataProcess {
      */
     public void setTimeSeriesKey(String timeSeriesKey) {
         this.timeSeriesKey = timeSeriesKey;
+    }
+
+    /**
+     * Return the granularity of the time series data
+     *
+     * @return the timeGranularity
+     */
+    public String getTimeGranularity() {
+        return timeGranularity;
+    }
+
+    public void setTimeGranularity(String timeGranularity) {
+        this.timeGranularity = timeGranularity;
+    }
+
+    public String getTimeInterval() {
+        return timeInterval;
+    }
+
+    public void setTimeInterval(String timeInterval) {
+        this.timeInterval = timeInterval;
     }
 }

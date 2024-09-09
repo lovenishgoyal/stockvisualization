@@ -6,6 +6,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.DefaultHighLowDataset;
@@ -59,12 +61,15 @@ public class CandleChartRenderer {
      * @throws Exception if an error occurs while creating the chart
      */
     public static JPanel createCandleChart(StockRawDataProcess stockRawDataProcess, String stockName, Date startDate, Date endDate) throws Exception {
+
         List<OHLCData> ohlcDataList = getProcessedStockData(stockRawDataProcess);
+
         // Fetch and filter out dates without data
         List<OHLCData> filteredDataList = filterData(ohlcDataList, startDate, endDate);
 
         // Convert filtered data into dataset for chart rendering
         OHLCDataset dataset = createOHLCDataset(stockName, filteredDataList);
+
         JFreeChart chart = ChartFactory.createCandlestickChart(
                 stockName,       // title
                 "Time",          // x-axis label
@@ -75,25 +80,26 @@ public class CandleChartRenderer {
 
         // Get the plot and set axis
         XYPlot plot = (XYPlot) chart.getPlot();
-        DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-        yAxis.setLowerBound(0);
-        System.out.println(stockRawDataProcess.getDf().toString());
-        dateAxis.setDateFormatOverride(stockRawDataProcess.getDf());
 
+        DateAxis xAxis = (DateAxis) plot.getDomainAxis();
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        xAxis.setDateFormatOverride(stockRawDataProcess.getDf());
         // Adjust axis range to only include available data points
         if (!filteredDataList.isEmpty()) {
             Date minDate = filteredDataList.get(0).getDate();
             Date maxDate = filteredDataList.get(filteredDataList.size() - 1).getDate();
 
             if (minDate.before(maxDate)) {
-                dateAxis.setRange(minDate, maxDate); // Set the date axis range to the available data range
+                xAxis.setRange(minDate, maxDate); // Set the date axis range to the available data range
             } else {
                 logger.warn("Invalid date range: minDate is not before maxDate. Using default range.");
             }
         } else {
             logger.warn("Filtered data list is empty. No data to display.");
         }
+
+        yAxis.setLowerBound(0);
 
         // Configure renderer
         CandlestickRenderer renderer = new CandlestickRenderer();
@@ -115,14 +121,14 @@ public class CandleChartRenderer {
         zoomInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                zoom(plot, 0.8); // Zoom in by 20%
+                zoom(plot, 0.8, stockRawDataProcess); // Zoom in by 20%
             }
         });
 
         zoomOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                zoom(plot, 1.2); // Zoom out by 20%
+                zoom(plot, 1.2, stockRawDataProcess); // Zoom out by 20%
             }
         });
 
@@ -145,7 +151,7 @@ public class CandleChartRenderer {
      * @param plot       the XYPlot to be zoomed
      * @param zoomFactor the factor by which to zoom (e.g., 0.8 for zooming in, 1.2 for zooming out)
      */
-    private static void zoom(XYPlot plot, double zoomFactor) {
+    private static void zoom(XYPlot plot, double zoomFactor, StockRawDataProcess stockRawDataProcess) {
         DateAxis domainAxis = (DateAxis) plot.getDomainAxis();
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 
@@ -163,11 +169,39 @@ public class CandleChartRenderer {
         double newLowerBound = rangeAxis.getLowerBound() + (yRange - newYRange) / 2;
         double newUpperBound = rangeAxis.getUpperBound() - (yRange - newYRange) / 2;
 
-        newLowerBound = Math.max(newLowerBound, 0); // Ensure lower bound is not less than 0
+        newLowerBound = Math.max(newLowerBound, 0);
 
         rangeAxis.setLowerBound(newLowerBound);
         rangeAxis.setUpperBound(newUpperBound);
+
+        /* Set tick units based on time granularity and timeinterval */
+        if (stockRawDataProcess.getTimeGranularity().equalsIgnoreCase("Daily")) {
+            domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, 1));
+        } else if (stockRawDataProcess.getTimeGranularity().equalsIgnoreCase("Weekly")) {
+            domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, 7));
+        } else if (stockRawDataProcess.getTimeGranularity().equalsIgnoreCase("Monthly")) {
+            domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MONTH, 1));
+        } else if (stockRawDataProcess.getTimeGranularity().equalsIgnoreCase("Intraday")) {
+            switch (stockRawDataProcess.getTimeInterval()) {
+                case "1Min":
+                    domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, 1));
+                    break;
+                case "5Min":
+                    domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, 5));
+                    break;
+                case "15Min":
+                    domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, 15));
+                    break;
+                case "30Min":
+                    domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, 30));
+                    break;
+                case "60Min":
+                    domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, 60));
+                    break;
+            }
+        }
     }
+
 
     /**
      * Filters out OHLCData points that are not within the specified date range or have invalid price values.
@@ -217,7 +251,7 @@ public class CandleChartRenderer {
                 ohlcDataList.add(new OHLCData(date, open, high, low, close, volume));
             }
         } catch (Exception e) {
-            logger.error(e.getLocalizedMessage());
+            logger.error("Error while processing stock data: " + e.getLocalizedMessage(), e);
         }
         return ohlcDataList;
     }

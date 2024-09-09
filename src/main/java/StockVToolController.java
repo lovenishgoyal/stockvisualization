@@ -42,8 +42,6 @@ import java.util.List;
 public class StockVToolController extends Application {
     private static final Logger logger = LoggerFactory.getLogger(StockVToolController.class);
     private static final String API_KEY = "XTN5B7134EVRGGHK";
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static final String SYMBOL_SEARCH_URL = "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&apikey=" + API_KEY;
 
     /**
      * The entry point of the JavaFX application. Sets up the user interface,
@@ -85,6 +83,7 @@ public class StockVToolController extends Application {
         lineChartButton.setToggleGroup(chartTypeGroup);
         candleChartButton.setToggleGroup(chartTypeGroup);
         lineChartButton.setSelected(true); // Default selection
+
 
         // Layout for Radio Buttons
         VBox radioBox = new VBox(10, lineChartButton, candleChartButton);
@@ -144,7 +143,7 @@ public class StockVToolController extends Application {
         suggestionList.setOnMouseClicked(e -> {
             String selectedSymbol = suggestionList.getSelectionModel().getSelectedItem();
             if (selectedSymbol != null) {
-                logger.info("selectedSymbol: " + selectedSymbol.split("--")[0]);
+                logger.info("selected Symbol: " + selectedSymbol.split("--")[0]);
                 stockInput.setText(selectedSymbol.split("--")[0].trim());
                 suggestionList.setVisible(false);
             }
@@ -168,8 +167,8 @@ public class StockVToolController extends Application {
             String endDateStr = endDatePicker.getValue() != null ? endDatePicker.getValue().toString() : defaultEndDate.toString();
 
             try {
-                Date startDate = dateFormat.parse(startDateStr);
-                Date endDate = dateFormat.parse(endDateStr);
+                Date startDate = Constants.dateFormat.parse(startDateStr);
+                Date endDate = Constants.dateFormat.parse(endDateStr);
 
                 if (startDate.after(endDate)) {
                     showAlert(Alert.AlertType.ERROR, "Input Error", "End Date must be after Start Date.");
@@ -218,7 +217,7 @@ public class StockVToolController extends Application {
      * @throws Exception If an error occurs while fetching data.
      */
     private List<String> fetchStockSymbols(String query) throws Exception {
-        String urlString = SYMBOL_SEARCH_URL + "&keywords=" + query;
+        String urlString = String.format(Constants.SYMBOL_SEARCH_URL, API_KEY) + "&keywords=" + query;
         URL url = new URL(urlString);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -261,5 +260,6 @@ public class StockVToolController extends Application {
 
     public static void main(String[] args) {
         launch(args);
+
     }
 }

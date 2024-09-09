@@ -1,33 +1,13 @@
 package stockVisualization;
 
-import java.awt.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 
-import chart.CandleChartRenderer;
-import models.OHLCData;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.CandlestickRenderer;
-import org.jfree.data.xy.OHLCDataset;
 import org.json.JSONObject;
-import utils.Constants;
-import utils.Helper;
-import utils.TimeZoneDateFormat;
-
-import javax.swing.*;
 
 public class StockDataFetcher {
 

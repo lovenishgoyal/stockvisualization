@@ -20,8 +20,8 @@ public class DailyDataFetcher extends DataFetcher {
      * @param apiKey the API key used for authentication with the data provider
      * @param timeInterval the time interval for the data fetch, e.g., "1 min, 2 mins"
      */
-    public DailyDataFetcher(String apiKey, String timeInterval) {
-        super(apiKey, timeInterval);
+    public DailyDataFetcher(String apiKey, String timeInterval, String granularity) {
+        super(apiKey, timeInterval,granularity);
     }
 
     /**

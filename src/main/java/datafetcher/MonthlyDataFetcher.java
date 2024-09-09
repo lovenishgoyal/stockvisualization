@@ -21,8 +21,8 @@ public class MonthlyDataFetcher extends DataFetcher {
      * @param apiKey the API key used for authentication with the data provider
      * @param timeInterval basically used to define the timeinterval
      */
-    public MonthlyDataFetcher(String apiKey, String timeInterval) {
-        super(apiKey, timeInterval);
+    public MonthlyDataFetcher(String apiKey, String timeInterval, String granularity) {
+        super(apiKey, timeInterval, granularity);
     }
 
     /**

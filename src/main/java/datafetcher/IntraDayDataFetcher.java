@@ -24,8 +24,8 @@ public class IntraDayDataFetcher extends DataFetcher {
      * @param apiKey the API key used for authentication with the data provider
      * @param timeInterval the time interval for intraday data, e.g., "1min", "5min", etc.
      */
-    public IntraDayDataFetcher(String apiKey, String timeInterval) {
-        super(apiKey, timeInterval);
+    public IntraDayDataFetcher(String apiKey, String timeInterval,String granularity) {
+        super(apiKey, timeInterval,granularity);
     }
 
     /**

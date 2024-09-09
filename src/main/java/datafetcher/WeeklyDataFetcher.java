@@ -21,8 +21,8 @@ public class WeeklyDataFetcher extends DataFetcher {
      * @param apiKey the API key used for authentication with the data provider
      * @param timeInterval to use time interval in api
      */
-    public WeeklyDataFetcher(String apiKey, String timeInterval) {
-        super(apiKey, timeInterval);
+    public WeeklyDataFetcher(String apiKey, String timeInterval,String granularity) {
+        super(apiKey, timeInterval,granularity);
     }
 
     /**

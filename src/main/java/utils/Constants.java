@@ -1,5 +1,7 @@
 package utils;
 
+import java.text.SimpleDateFormat;
+
 /**
  * A utility class that defines constants used throughout the application.
  * <p>
@@ -21,6 +23,11 @@ public class Constants {
      * </p>
      */
     public static final String DATA_API_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_%s&apikey=%s";
+
+    public static final String SYMBOL_SEARCH_URL = "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&apikey=%s";
+
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 
     /**
      * The key for the opening price in the API response.
@@ -71,4 +78,23 @@ public class Constants {
      */
     public static final String[] CHART_OPTIONS = {"Candle", "Line"};
 
+    /**
+     * The string constant for intraday time granularity.
+     */
+    public static final String INTRADAY = "INTRADAY";
+
+    /**
+     * The string constant for daily time granularity.
+     */
+    public static final String DAILY = "DAILY";
+
+    /**
+     * The string constant for weekly time granularity.
+     */
+    public static final String WEEKLY = "WEEKLY";
+
+    /**
+     * The string constant for monthly time granularity.
+     */
+    public static final String MONTHLY = "MONTHLY";
 }

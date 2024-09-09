@@ -1,5 +1,7 @@
 package datafetcher;
 
+import utils.Constants;
+
 /**
  * A factory class for creating instances of {@code DataFetcher} based on the specified granularity.
  * <p>
@@ -25,8 +27,8 @@ public class GetDataFetcherFactory {
      * If the granularity is {@code null} or does not match any known values, {@code null} is returned.
      * </p>
      *
-     * @param granularity the granularity of the data ("INTRADAY", "DAILY", "WEEKLY", "MONTHLY")
-     * @param api the API key used for authentication with the data provider
+     * @param granularity  the granularity of the data ("INTRADAY", "DAILY", "WEEKLY", "MONTHLY")
+     * @param api          the API key used for authentication with the data provider
      * @param timeInterval the time interval for the data fetch, e.g., "daily", "weekly", etc.
      * @return a {@code DataFetcher} instance appropriate for the specified granularity, or {@code null} if no match is found
      */
@@ -34,14 +36,14 @@ public class GetDataFetcherFactory {
         if (granularity == null) {
             return null;
         }
-        if (granularity.equals("INTRADAY")) {
-            return new IntraDayDataFetcher(api, timeInterval);
-        } else if (granularity.equalsIgnoreCase("DAILY")) {
-            return new DailyDataFetcher(api, timeInterval);
-        } else if (granularity.equals("WEEKLY")) {
-            return new WeeklyDataFetcher(api, timeInterval);
-        } else if (granularity.equals("MONTHLY")) {
-            return new MonthlyDataFetcher(api, timeInterval);
+        if (granularity.equals(Constants.INTRADAY)) {
+            return new IntraDayDataFetcher(api, timeInterval, granularity);
+        } else if (granularity.equalsIgnoreCase(Constants.DAILY)) {
+            return new DailyDataFetcher(api, timeInterval, granularity);
+        } else if (granularity.equals(Constants.WEEKLY)) {
+            return new WeeklyDataFetcher(api, timeInterval, granularity);
+        } else if (granularity.equals(Constants.MONTHLY)) {
+            return new MonthlyDataFetcher(api, timeInterval, granularity);
         }
         return null;
     }
