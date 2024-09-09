@@ -4,15 +4,15 @@ The Stock Candle Visualization Tool is a Java-based application designed to visu
 
 ## Features:
 
-#### **Real-time and Historical Data:**
+#### **1. Real-time and Historical Data:**
 
 Fetch and visualize stock price data for various time intervals, including daily, weekly, and intraday.
 
-#### **Candlestick Charts:**
+#### **2. Candlestick Charts:**
 
 Visualize stock prices using candlestick charts, displaying key metrics such as open, high, low, and close values for each time interval.
 
-#### **Zoom Functionality:**
+#### **3. Zoom Functionality:**
 
 ###### **Zoom In/Out Buttons:** 
 - Easily zoom in or out using the "Zoom In" and "Zoom Out" buttons located beneath the chart.
@@ -23,13 +23,13 @@ Visualize stock prices using candlestick charts, displaying key metrics such as 
 - Select specific regions of the chart with your mouse to zoom in on the highlighted area.
 This zoom functionality allows for detailed analysis of stock movements and trends.
 
-**Customizable Time Granularity:**
+**4. Customizable Time Granularity:**
 View stock data on daily, weekly, monthly, or intraday intervals, depending on your analysis needs.
 
-**API Integration:**
+**5. API Integration:**
 Fetch stock data from financial APIs (e.g., Alpha Vantage) for accurate and up-to-date information.
 
-**Line Chart Option:**
+**6. Line Chart Option:**
 Includes a Line Chart option for testing purposes, providing an additional way to visualize stock price trends.
 
 ## Getting Started
