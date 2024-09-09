@@ -34,13 +34,33 @@ Includes a Line Chart option for testing purposes, providing an additional way t
 
 ## Getting Started
 
-1. Clone the Repository
-        `git clone https://github.com/yourusername/stock-candle-visualization-tool.git`
-2. For Configure API Integration Update `config.properties` file with your api key
-3. Build the Project Navigate to the project directory and build the project using Maven.
-4. Run the Application Execute the main class(StockVToolController) to start the application and begin visualizing stock data.
-You can run command inside the project directory `mvn clean javafx:run`
+Follow these steps to set up and run the Stock Candle Visualization Tool:
 
+#### 1. Clone the Repository
+
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/yourusername/stock-candle-visualization-tool.git 
+```
+
+#### 2. Configure with Your API Integration
+   Update the **config.properties** file with your API key. The config.properties file should be located in the src/main/resources directory. Ensure that it includes the following property:
+ 
+  ``` api.key=YOUR_API_KEY_HERE ```
+
+Please note currently a sample api is available in the config.properties file which has the daily limit of 25.
+
+#### 3. Build the Project
+   Navigate to the project directory and build the project using Maven:
+
+```maven clean install```
+
+#### 4. Run the Application
+Execute the main class StockVToolController to start the application and begin visualizing stock data. You can run the application with the following Maven command:
+
+```mvn clean javafx:run```
+ 
 ## Dependencies
 * JavaFX or Swing for the user interface
 * JFreeChart for chart rendering
